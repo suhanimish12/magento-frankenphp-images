@@ -12,6 +12,8 @@
 #   - CADDY_EXTRA_CONFIG: Additional Caddy configuration blocks
 #   - CADDY_SERVER_EXTRA_DIRECTIVES: Extra directives for the server block
 #   - CADDY_TLS_CONFIG: TLS configuration (e.g., "internal" for self-signed or path to cert/key)
+#   - ENABLE_HTTP3: Enable HTTP/3 support (default: true)
+#   - ENABLE_EARLY_HINTS: Enable Early Hints (default: true)
 #
 # Documentation:
 #   - Caddy: https://caddyserver.com/docs/
@@ -21,8 +23,15 @@
 {
     {$CADDY_GLOBAL_OPTIONS}
 
+    # Enable HTTP/3 (QUIC) support
+    servers {
+        protocols h1 h2 h3
+    }
+
     frankenphp {
         {$FRANKENPHP_CONFIG}
+        # FrankenPHP worker mode for better performance (optional)
+        # num_threads {$FRANKENPHP_NUM_THREADS:auto}
     }
 
     order php_server before file_server
@@ -35,7 +44,11 @@
 }
 
 {$SERVER_NAME:localhost} {
-    tls {$CADDY_TLS_CONFIG:internal}
+    # TLS configuration with HTTP/3 support
+    tls {$CADDY_TLS_CONFIG:internal} {
+        protocols tls1.2 tls1.3
+        curves x25519 secp256r1 secp384r1
+    }
     
     log {
         format filter {
@@ -50,8 +63,56 @@
     log {
         output stdout
     }
+    
     root * /var/www/html/pub
-    encode zstd br gzip
+    
+    # Advanced compression with Brotli priority
+    # Brotli (br) provides ~20% better compression than gzip for text
+    encode {
+        # Brotli with quality 6 (good balance between compression and speed)
+        br 6
+        # Zstandard (modern, fast compression)
+        zstd
+        # Gzip as fallback
+        gzip 6
+        
+        # Minimum length to compress (avoid overhead for small files)
+        minimum_length 256
+        
+        # File types to compress
+        match {
+            header Content-Type text/*
+            header Content-Type application/json*
+            header Content-Type application/javascript*
+            header Content-Type application/xhtml+xml*
+            header Content-Type application/atom+xml*
+            header Content-Type application/rss+xml*
+            header Content-Type application/x-javascript*
+            header Content-Type image/svg+xml*
+            header Content-Type image/x-icon*
+            header Content-Type application/vnd.ms-fontobject*
+            header Content-Type font/*
+        }
+    }
+    
+    # Modern security and performance headers
+    header {
+        # Security headers
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "browsing-topics=(), camera=(), microphone=(), geolocation=()"
+        
+        # Performance headers
+        X-XSS-Protection "1; mode=block"
+        
+        # HTTP/3 Alt-Svc header (advertise HTTP/3 support)
+        Alt-Svc `h3=":443"; ma=86400`
+        
+        # Remove server identification
+        -Server
+        -X-Powered-By
+    }
 
     {$CADDY_SERVER_EXTRA_DIRECTIVES}
 
@@ -91,7 +152,26 @@
             path *.ico *.jpg *.jpeg *.png *.gif *.svg *.svgz *.webp *.avif *.avifs *.js *.css *.eot *.ttf *.otf *.woff *.woff2 *.html *.json *.webmanifest
         }
         handle @staticFiles {
-            header Cache-Control "public, max-age=31536000"
+            header Cache-Control "public, max-age=31536000, immutable"
+            
+            # Early Hints for critical resources
+            @criticalCSS path *.css
+            header @criticalCSS {
+                Link "<{path}>; rel=preload; as=style"
+                defer
+            }
+            
+            @criticalJS path *.js
+            header @criticalJS {
+                Link "<{path}>; rel=preload; as=script"
+                defer
+            }
+            
+            @fonts path *.woff *.woff2 *.ttf *.otf
+            header @fonts {
+                Link "<{path}>; rel=preload; as=font; crossorigin"
+                defer
+            }
         }
         @noCacheFiles {
             path *.zip *.gz *.gzip *.bz2 *.csv *.xml
@@ -113,7 +193,11 @@
             path *.ico *.jpg *.jpeg *.png *.gif *.svg *.svgz *.webp *.avif *.avifs *.js *.css *.eot *.ttf *.otf *.woff *.woff2
         }
         handle @staticFiles {
-            header Cache-Control "public, max-age=31536000"
+            header Cache-Control "public, max-age=31536000, immutable"
+            
+            # Vary header for modern image formats
+            @images path *.jpg *.jpeg *.png *.webp *.avif *.avifs
+            header @images Vary "Accept"
         }
         @noCacheFiles {
             path *.zip *.gz *.gzip *.bz2 *.csv *.xml

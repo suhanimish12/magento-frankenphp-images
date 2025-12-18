@@ -58,14 +58,17 @@ RUN set -eux; \
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Set up app dir and ownership
-RUN usermod -u 1000 www-data && groupmod -g 1000 www-data \
-    && mkdir -p /etc/caddy /data/caddy /var/www/html /var/www/.composer /etc/php \
+RUN usermod -u 1000 www-data && groupmod -g 1000 www-data
+RUN mkdir -p /etc/caddy /data/caddy /var/www/html /var/www/.composer /etc/php \
     && chown -R www-data:www-data /var/www /data /etc/caddy \
     && chown root:root /etc/php
 
-# Copy configuration files and entrypoint
 COPY --chown=www-data:www-data common/Caddyfile.template /etc/caddy/Caddyfile.template
-COPY --chmod=755 common/entrypoint-base.sh /usr/local/bin/entrypoint.sh
+COPY --chown=www-data:www-data common/health.php /var/www/html/pub/health.php
+COPY common/entrypoint-base.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Copy PHP configuration from common
 COPY common/conf/app.ini /usr/local/etc/php/conf.d/zz-app.ini
 COPY common/conf/opcache.ini /usr/local/etc/php/conf.d/zz-opcache.ini
 
@@ -75,21 +78,27 @@ ENV CADDY_LOG_OUTPUT=stdout \
 
 WORKDIR /var/www/html
 
-EXPOSE 80 443 443/udp 2019
+EXPOSE 80
+EXPOSE 443
+EXPOSE 443/udp
+EXPOSE 2019
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-# Optional healthcheck
-HEALTHCHECK --interval=30s --timeout=5s CMD curl -f http://localhost/ || exit 1
+# Comprehensive healthcheck using custom endpoint
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost/health.php || exit 1
 
 FROM base AS dev
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     mkcert \
- && apt-get clean && rm -rf /var/lib/apt/lists/* \
- && install-php-extensions xdebug \
- && curl -L -o /usr/local/bin/mhsendmail \
+ && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN install-php-extensions xdebug
+
+RUN curl -L -o /usr/local/bin/mhsendmail \
     https://github.com/mailhog/mhsendmail/releases/download/v0.2.0/mhsendmail_linux_amd64 \
  && chmod +x /usr/local/bin/mhsendmail
 
@@ -97,7 +106,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY common/conf/mail.ini /usr/local/etc/php/conf.d/zz-mail.ini
 COPY common/conf/xdebug.ini /usr/local/etc/php/conf.d/zz-xdebug.ini
 COPY common/conf/disable-opcache.ini /usr/local/etc/php/conf.d/zz-opcache.ini
-COPY --chmod=755 common/entrypoint-dev.sh /usr/local/bin/entrypoint.sh
+
+COPY common/entrypoint-dev.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 ENV SENDMAIL_PATH=/usr/local/bin/mhsendmail \
     MAGENTO_RUN_MODE=developer \

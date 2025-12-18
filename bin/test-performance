@@ -1,0 +1,111 @@
+#!/bin/bash
+# Performance Validation Script
+# Tests performance optimizations in the FrankenPHP image
+
+set -e
+
+DOMAIN="${1:-localhost}"
+PROTOCOL="${2:-https}"
+BASE_URL="${PROTOCOL}://${DOMAIN}"
+
+echo "🚀 Testing Performance Optimizations"
+echo "URL: ${BASE_URL}"
+echo "========================================"
+echo ""
+
+# Colors
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+PASSED=0
+FAILED=0
+
+test_result() {
+    if [ $1 -eq 0 ]; then
+        echo -e "${GREEN}✓ PASS${NC}: $2"
+        ((PASSED++))
+    else
+        echo -e "${RED}✗ FAIL${NC}: $2"
+        ((FAILED++))
+    fi
+}
+
+# Test 1: HTTP/3 Support
+echo "1️⃣  HTTP/3 (QUIC) Support"
+ALT_SVC=$(curl -s -I "${BASE_URL}" 2>/dev/null | grep -i "alt-svc" | grep "h3" || true)
+if [ -n "$ALT_SVC" ]; then
+    test_result 0 "HTTP/3 advertised via Alt-Svc header"
+else
+    test_result 1 "HTTP/3 Alt-Svc header not found"
+fi
+echo ""
+
+# Test 2: Brotli Compression
+echo "2️⃣  Brotli Compression"
+BROTLI=$(curl -s -H "Accept-Encoding: br,gzip" -I "${BASE_URL}" 2>/dev/null | grep -i "content-encoding" | grep "br" || true)
+if [ -n "$BROTLI" ]; then
+    test_result 0 "Brotli compression enabled"
+else
+    test_result 1 "Brotli compression not detected"
+fi
+echo ""
+
+# Test 3: Security Headers
+echo "3️⃣  Security Headers"
+HEADERS=$(curl -s -I "${BASE_URL}" 2>/dev/null)
+
+if echo "$HEADERS" | grep -qi "x-content-type-options.*nosniff"; then
+    test_result 0 "X-Content-Type-Options: nosniff"
+else
+    test_result 1 "X-Content-Type-Options missing"
+fi
+
+if echo "$HEADERS" | grep -qi "x-frame-options"; then
+    test_result 0 "X-Frame-Options configured"
+else
+    test_result 1 "X-Frame-Options missing"
+fi
+echo ""
+
+# Test 4: Server Header Removed
+echo "4️⃣  Server Header Removal"
+if echo "$HEADERS" | grep -qi "^server:"; then
+    test_result 1 "Server header still present"
+else
+    test_result 0 "Server header removed"
+fi
+echo ""
+
+# Test 5: Health Check Endpoint
+echo "5️⃣  Health Check Endpoint"
+HEALTH=$(curl -s "${BASE_URL}/health.php" 2>/dev/null || true)
+if echo "$HEALTH" | grep -q "status"; then
+    test_result 0 "Health check endpoint responding"
+    
+    if command -v jq &> /dev/null; then
+        STATUS=$(echo "$HEALTH" | jq -r '.status' 2>/dev/null || echo "unknown")
+        JIT=$(echo "$HEALTH" | jq -r '.checks.opcache.jit_enabled' 2>/dev/null || echo "unknown")
+        echo "   Status: $STATUS"
+        echo "   JIT: $JIT"
+    fi
+else
+    test_result 1 "Health check endpoint not responding"
+fi
+echo ""
+
+# Summary
+echo "========================================"
+echo "📊 Test Summary"
+echo "========================================"
+echo -e "${GREEN}Passed: $PASSED${NC}"
+echo -e "${RED}Failed: $FAILED${NC}"
+echo ""
+
+if [ $FAILED -eq 0 ]; then
+    echo -e "${GREEN}✓ All tests passed!${NC}"
+    exit 0
+else
+    echo -e "${RED}✗ Some tests failed${NC}"
+    exit 1
+fi

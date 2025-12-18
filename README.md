@@ -12,6 +12,14 @@
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License MIT" /></a>
 </p>
 
+<p align="center">
+  <img src="https://img.shields.io/badge/HTTP%2F3-enabled-success.svg?logo=http" alt="HTTP/3" />
+  <img src="https://img.shields.io/badge/Brotli-enabled-success.svg" alt="Brotli" />
+  <img src="https://img.shields.io/badge/Early%20Hints-enabled-success.svg" alt="Early Hints" />
+  <img src="https://img.shields.io/badge/TLS-1.3-success.svg?logo=letsencrypt" alt="TLS 1.3" />
+  <img src="https://img.shields.io/badge/JIT-enabled-success.svg?logo=php" alt="JIT" />
+</p>
+
 🚀 High-performance Docker images for Magento 2 with [FrankenPHP](https://frankenphp.dev/).
 
 ## Supported Tags
@@ -77,6 +85,14 @@ RUN bin/magento setup:static-content:deploy -f
 - ✅ Mailhog support
 - ✅ Runtime UID/GID mapping
 
+### Performance Features
+- 🚀 **HTTP/3 (QUIC)** - 10-50% faster page loads
+- ⚡ **Early Hints (HTTP 103)** - Preload critical resources
+- 📦 **Brotli Compression** - 20-25% better compression than gzip
+- 🎯 **Optimized Caching** - Immutable cache headers for static assets
+- 🔒 **TLS 1.3** - Faster handshakes with 0-RTT resumption
+- 🎨 **Modern Image Formats** - AVIF, WebP support with Vary headers
+
 ## PHP Extensions
 
 ```
@@ -131,7 +147,7 @@ See the [Caddyfile Configuration Guide](docs/Caddyfile.md) for detailed document
 ## Links
 
 - 🐳 [Docker Hub](https://hub.docker.com/r/mohelmrabet/magento-frankenphp)
-- 📦 [GitHub](https://github.com/CleatSquad/magento-frankenphp-images)
+- 📦 [GitHub](https://github.com/mohaelmrabet/magento-frankenphp-images)
 - 🚀 [FrankenPHP](https://frankenphp.dev/)
 - 🔐 [Security Policy](SECURITY.md)
 - 📖 [Contributing](CONTRIBUTING.md)
@@ -145,6 +161,7 @@ See the [Caddyfile Configuration Guide](docs/Caddyfile.md) for detailed document
 | [Configuration](docs/configuration.md) | Environment variables and settings |
 | [Caddyfile](docs/Caddyfile.md) | Web server configuration |
 | [Xdebug](docs/xdebug.md) | Debugging with Xdebug |
+| [Performance](docs/performance.md) | HTTP/3, Early Hints, Brotli optimization |
 
 ## License
 
