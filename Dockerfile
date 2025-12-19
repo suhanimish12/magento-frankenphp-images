@@ -95,16 +95,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     mkcert \
  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Copy PHP dev configuration from common
+COPY common/conf/disable-opcache.ini /usr/local/etc/php/conf.d/zz-opcache.ini
+
 RUN install-php-extensions xdebug
 
 RUN curl -L -o /usr/local/bin/mhsendmail \
     https://github.com/mailhog/mhsendmail/releases/download/v0.2.0/mhsendmail_linux_amd64 \
  && chmod +x /usr/local/bin/mhsendmail
 
-# Copy PHP dev configuration from common
+# Copy remaining PHP dev configuration
 COPY common/conf/mail.ini /usr/local/etc/php/conf.d/zz-mail.ini
 COPY common/conf/xdebug.ini /usr/local/etc/php/conf.d/zz-xdebug.ini
-COPY common/conf/disable-opcache.ini /usr/local/etc/php/conf.d/zz-opcache.ini
 
 COPY common/entrypoint-dev.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
